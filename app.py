@@ -55,7 +55,13 @@ def load_model():
 
 
 def prepare_audio(audio_data):
-    raw = getattr(audio_data, "data", audio_data)
+    if hasattr(audio_data, "getvalue"):
+        raw = audio_data.getvalue()
+    elif hasattr(audio_data, "read"):
+        audio_data.seek(0)
+        raw = audio_data.read()
+    else:
+        raw = audio_data
     try:
         sample_rate, audio = wavfile.read(io.BytesIO(raw))
     except Exception as exc:
